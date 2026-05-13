@@ -1,0 +1,211 @@
+<!-- ===== HERO CON BACKGROUND IMAGE ===== -->
+
+<section class="hero">
+    <div class="hero-contenuto">
+        <h1>Titolo Principale</h1>
+        <h2>Sottotitolo descrittivo</h2>
+        <a href="catalogo.html" class="btn-cta">Call to Action</a>
+    </div>
+</section>
+
+<!-- Variante senza immagine (solo gradiente): aggiungi classe hero--gradiente -->
+<!-- <section class="hero hero--gradiente"> -->
+
+
+<!-- ===== BARRA FILTRI con BOTTONI (consigliato) ===== -->
+<!-- Pattern verifica-2101: bottoni con stato .attivo, zero edge case. -->
+
+<section class="barra-filtri">
+    <div class="container filtri-inner">
+        <div class="filtri-bottoni" data-filtri="categoria">
+            <!-- generati da JS con inizializzaFiltriBottoni(...) -->
+        </div>
+        <div class="filtro-destra">
+            <label for="input-ricerca" class="sr-only">Cerca</label>
+            <input type="search" id="input-ricerca" class="input-ricerca" placeholder="Cerca...">
+        </div>
+        <span id="contatore-risultati"></span>
+    </div>
+</section>
+
+
+<!-- ===== BARRA FILTRI con DROPDOWN UL/LI (variante per molte categorie) ===== -->
+<!-- Pattern verifica-2304: una tendina gestita da JS. -->
+
+<section class="barra-filtri">
+    <div class="container filtri-inner">
+        <div class="filtro-sinistra">
+            <div class="dropdown-custom" data-dropdown="categoria" tabindex="0">
+                <div class="dropdown-label">Categoria: <span class="dropdown-valore">Tutte</span></div>
+                <ul class="dropdown-opzioni">
+                    <!-- generate da JS con inizializzaDropdown(...) -->
+                </ul>
+            </div>
+        </div>
+        <div class="filtro-destra">
+            <input type="search" id="input-ricerca" class="input-ricerca" placeholder="Cerca...">
+        </div>
+    </div>
+</section>
+
+
+<!-- ===== DROPDOWN — 3 varianti ===== -->
+
+<!-- A) Bottoni filtro (consigliato) -->
+<div class="filtri-bottoni" data-filtri="categoria"></div>
+
+<!-- B) Tendina UL/LI -->
+<div class="dropdown-custom" data-dropdown="categoria" tabindex="0">
+    <div class="dropdown-label">Categoria: <span class="dropdown-valore">Tutte</span></div>
+    <ul class="dropdown-opzioni"></ul>
+</div>
+
+<!-- C) <select> nativo — fallback rapido -->
+<select class="dropdown" onchange="filtraCategoria(this.value)">
+    <option value="tutte">Tutte</option>
+    <option value="val1">Opzione 1</option>
+</select>
+
+
+<!-- ===== GRIGLIA PRODOTTI ===== -->
+
+<section>
+    <div class="container">
+        <div class="griglia">
+            <!-- Card generate da JS con renderCard() -->
+        </div>
+    </div>
+</section>
+
+
+<!-- ===== CARD PRODOTTO (generata da JS, qui per riferimento) ===== -->
+
+<article class="card">
+    <img src="https://picsum.photos/seed/esempio/600/400" alt="Desc">
+    <div class="card-body">
+        <span class="badge badge-categoria">categoria</span>
+        <h3>Nome Elemento</h3>
+        <p>Breve descrizione.</p>
+        <p class="prezzo">&euro; 19.90</p>
+        <button class="btn" type="button">Vedi dettaglio</button>
+    </div>
+</article>
+
+<!-- Card esaurita -->
+<article class="card card-esaurita">
+    <img src="https://picsum.photos/seed/esaurito/600/400" alt="Desc">
+    <div class="card-body">
+        <span class="badge badge-categoria">categoria</span>
+        <h3>Elemento Esaurito</h3>
+        <p>Descrizione.</p>
+        <p class="prezzo">&euro; 29.90</p>
+        <button class="btn" disabled>Esaurito</button>
+    </div>
+</article>
+
+
+<!-- ===== CARD INFO (senza immagine, bordo top) ===== -->
+
+<div class="card-info">
+    <h3>Titolo</h3>
+    <p>Testo descrittivo. Usala per presentazione azienda, feature, vantaggi.</p>
+</div>
+
+
+<!-- ===== CARD PREZZO (pricing tier) ===== -->
+
+<div class="card-prezzo">
+    <h3>Piano Base</h3>
+    <p class="prezzo-grande">&euro;50 <small>/mese</small></p>
+    <ul>
+        <li>Feature inclusa 1</li>
+        <li>Feature inclusa 2</li>
+        <li>Feature inclusa 3</li>
+    </ul>
+    <button class="btn">Scegli piano</button>
+</div>
+
+
+<!-- ===== BADGE (5 colori, usabili per qualsiasi scopo) ===== -->
+
+<span class="badge badge--verde">facile</span>
+<span class="badge badge--giallo">media</span>
+<span class="badge badge--rosso">difficile</span>
+<span class="badge badge--blu">nuovo</span>
+<span class="badge badge--grigio">esaurito</span>
+<span class="badge badge-categoria">interno</span>
+
+
+<!-- ===== MODAL OVERLAY ===== -->
+<!-- Mettilo prima di </body>. Classe "nascosto" lo nasconde. -->
+<!-- Il contenuto interno (incluso il bottone .modal-chiudi) lo genera templateModal(). -->
+<!-- initModal('.modal-overlay') gestisce: click su .modal-chiudi (delegato), click sul backdrop, Escape. -->
+
+<div class="modal-overlay nascosto" aria-modal="true" role="dialog">
+    <!-- Contenuto inserito da JS con apriModal() -->
+</div>
+
+
+<!-- ===== DETTAGLIO IN-PAGINA (alternativa al modal) ===== -->
+<!-- Pattern verifica-2304/2101: niente modal, il dettaglio sostituisce la griglia o sta sotto. -->
+
+<section class="pane">
+    <!-- Generato da mostraDettaglio('.pane', prodotto, { campi:{...}, onIndietro: renderCatalogo }) -->
+</section>
+
+
+<!-- ===== ACCORDION FAQ ===== -->
+
+<div class="accordion">
+    <div class="accordion-item">
+        <button class="accordion-titolo" type="button">
+            Domanda 1?
+            <span class="accordion-icona">+</span>
+        </button>
+        <div class="accordion-corpo">
+            <p>Risposta 1.</p>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <button class="accordion-titolo" type="button">
+            Domanda 2?
+            <span class="accordion-icona">+</span>
+        </button>
+        <div class="accordion-corpo">
+            <p>Risposta 2.</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- ===== FORM CONTATTI ===== -->
+
+<form class="form-contatti" action="#" method="post">
+    <h2>Scrivici</h2>
+    <div class="campo">
+        <label for="nome">Nome</label>
+        <input type="text" id="nome" name="nome" required>
+    </div>
+    <div class="campo">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+    </div>
+    <div class="campo">
+        <label for="messaggio">Messaggio</label>
+        <textarea id="messaggio" name="messaggio" rows="5" required></textarea>
+    </div>
+    <button type="submit" class="btn">Invia</button>
+</form>
+
+
+<!-- ===== INFO CONTATTI ===== -->
+
+<div class="info-contatti">
+    <h2>Dove siamo</h2>
+    <p><strong>Indirizzo:</strong> Via Esempio 1, Citta</p>
+    <p><strong>Telefono:</strong> 000 000 0000</p>
+    <p><strong>Email:</strong> info@esempio.it</p>
+    <p><strong>Orari:</strong><br>Lun-Ven: 9-19 | Sab: 9-17 | Dom: chiuso</p>
+</div>
+
+<!-- Wrappa info + form in <div class="contatti-grid"> per layout 2 colonne -->

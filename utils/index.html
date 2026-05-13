@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>utils/</title>
+</head>
+<body>
+<h1>utils/</h1>
+<p>Libreria di supporto per verifiche di sviluppo web. Copia, incolla, adatta.</p>
+<hr>
+<ul>
+    <li><a href="css/">css/</a> — Reset, variabili colore, layout responsive, componenti UI</li>
+    <li><a href="js/">js/</a> — DOM helpers, filtri, dropdown, componenti JS, logging</li>
+    <li><a href="snippets/">snippets/</a> — Boilerplate HTML5, blocchi componenti, cheat-sheet d'esame</li>
+</ul>
+
+<hr>
+<h2>Quick reference</h2>
+<pre><code>/* GRIGLIA RESPONSIVE */
+.griglia { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.75rem; }
+@media (max-width: 900px) { .griglia { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .griglia { grid-template-columns: 1fr; } }
+
+/* MODAL OVERLAY */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.55);
+                 display: flex; align-items: center; justify-content: center; z-index: 200; }
+.nascosto { display: none; }
+
+/* FILTRO + RICERCA (AND) — usa filtraSemplice() da filtri.js */
+const risultati = filtraSemplice(dati, categoriaCorrente, ricercaCorrente, ['nome', 'descrizione']);
+
+/* GUARD INIT (multi-pagina, nessun errore sulle pagine senza .griglia) */
+document.addEventListener('DOMContentLoaded', () =&gt; {
+    initSeEsiste('.griglia',    () =&gt; { inizializzaCatalogo(); renderCatalogo(); });
+    initSeEsiste('.accordion',  () =&gt; inizializzaAccordion());
+});
+
+/* LOGGING */
+logInit('prodotti', dati);                               // in DOMContentLoaded
+logFiltro(categoriaCorrente, ricercaCorrente, risultati); // in renderCatalogo
+logDettaglio(item);                                      // in apriDettaglio</code></pre>
+
+<hr>
+<h2>Cosa rendere statico vs dinamico</h2>
+<pre>STATICO (HTML diretto — non generare con JS):
+  header, nav, footer, hero, form, struttura accordion,
+  contenitore .griglia vuoto, overlay modal vuoto,
+  dropdown-custom vuoto (le voci le genera inizializzaDropdown),
+  filtri-bottoni vuoto (i bottoni li genera inizializzaFiltriBottoni)
+
+DINAMICO (genera con JS dall'array dati):
+  card nella griglia        → renderCard() o creaCard() custom
+  contenuto modal           → apriModal() + templateModal()
+  voci dropdown             → inizializzaDropdown()
+  bottoni filtro            → inizializzaFiltriBottoni()
+
+Regola: se il contenuto non cambia in base ai dati, è statico.</pre>
+</body>
+</html>

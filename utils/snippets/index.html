@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>utils/snippets/</title>
+</head>
+<body>
+<a href="../">← utils/</a>
+<h1>snippets/</h1>
+<p>Blocchi HTML pronti da copiare. Il sorgente è mostrato sotto — copia da qui o apri i file nell'editor.</p>
+<ul>
+    <li><a href="#boilerplate">boilerplate.html</a> — Template base HTML5 italiano</li>
+    <li><a href="#hero">Hero</a> — Con background-image + overlay</li>
+    <li><a href="#filtri">Barra filtri</a> — Bottoni filtro + ricerca + contatore (consigliato)</li>
+    <li><a href="#filtri-dropdown">Barra filtri — variante dropdown</a> — Tendina UL/LI</li>
+    <li><a href="#dropdown">Dropdown — 3 varianti</a> — Bottoni, tendina UL/LI, &lt;select&gt;</li>
+    <li><a href="#griglia">Griglia prodotti</a></li>
+    <li><a href="#card-prodotto">Card prodotto</a> — Generata da renderCard()</li>
+    <li><a href="#card-info">Card info</a> — Senza immagine, bordo top</li>
+    <li><a href="#card-prezzo">Card prezzo</a> — Pricing tier</li>
+    <li><a href="#badge">Badge</a> — 5 colori generici</li>
+    <li><a href="#modal">Modal overlay</a> — Con initModal() per backdrop/Escape/chiudi</li>
+    <li><a href="#dettaglio">Dettaglio in-pagina</a> — Alternativa al modal</li>
+    <li><a href="#accordion">Accordion FAQ</a></li>
+    <li><a href="#form">Form contatti</a></li>
+    <li><a href="#info-contatti">Info contatti</a></li>
+</ul>
+
+<hr>
+
+<h2>Cheat-sheet pratiche d'esame</h2>
+<ul>
+    <li><strong>Niente onclick inline.</strong> Tutti i listener si registrano con
+        <code>addEventListener</code>. <code>renderCard()</code> e <code>mostraDettaglio()</code>
+        ricevono callback (<code>onClick</code>, <code>onBottone</code>, <code>onIndietro</code>)
+        che catturano l'oggetto via closure — nessun <code>find(p =&gt; p.id === id)</code>
+        dopo aver perso l'oggetto.</li>
+    <li><strong>Schema-agnostico.</strong> Passa <code>opts.campi = { titolo, testo, immagine, prezzo, categoria }</code>
+        a renderCard/templateModal/mostraDettaglio — funzionano con qualunque schema
+        (nome/name, descrizione/description, ecc.).</li>
+    <li><strong>Filtri categoria:</strong> consigliato <code>inizializzaFiltriBottoni</code> (bottoni
+        con stato <code>.attivo</code>). Alternative: <code>inizializzaDropdown</code> (tendina UL/LI)
+        o &lt;select&gt; nativo come fallback rapido.</li>
+    <li><strong>Event delegation</strong> dove si fa re-render: il listener sta sul
+        contenitore (<code>delega(...)</code>), non sui figli.</li>
+    <li><strong>Guard di init</strong> in ogni pagina: <code>initSeEsiste('.griglia', () =&gt; ...)</code></li>
+    <li><strong>Debounce</strong> sulla ricerca testuale: <code>debounce(fn, 200)</code> da filtri.js.</li>
+</ul>
+
+<hr>
+
+<h2>Boilerplate JS di catalogo (con gli utils)</h2>
+<pre><code>// Prima di &lt;/body&gt;, in ordine — niente defer:
+//   &lt;script src="utils/js/dom.js"&gt;&lt;/script&gt;
+//   &lt;script src="utils/js/filtri.js"&gt;&lt;/script&gt;
+//   &lt;script src="utils/js/dropdown.js"&gt;&lt;/script&gt;
+//   &lt;script src="utils/js/componenti.js"&gt;&lt;/script&gt;
+//   &lt;script src="utils/js/logging.js"&gt;&lt;/script&gt;
+//   &lt;script src="script.js"&gt;&lt;/script&gt;
+
+const piante = [ /* ... */ ];
+let categoriaCorrente = 'tutte';
+let ricercaCorrente   = '';
+
+const CAMPI = { titolo:'nome', testo:'descrizione', immagine:'immagine',
+                prezzo:'prezzo', categoria:'categoria' };
+
+function renderCatalogo() {
+    const griglia = $('.griglia');
+    griglia.innerHTML = '';
+    const risultati = filtraSemplice(piante, categoriaCorrente, ricercaCorrente,
+                                     ['nome', 'descrizione']);
+    risultati.forEach(p =&gt; {
+        griglia.appendChild(renderCard(p, {
+            campi:    CAMPI,
+            esaurito: x =&gt; !x.disponibile,
+            onClick:  pianta =&gt; apriDettaglio(pianta)
+        }));
+    });
+    if (risultati.length === 0) {
+        griglia.innerHTML = '&lt;p&gt;Nessun risultato.&lt;/p&gt;';
+    }
+    logFiltro(categoriaCorrente, ricercaCorrente, risultati);
+}
+
+function apriDettaglio(pianta) {
+    logDettaglio(pianta);
+    apriModal('.modal-overlay', templateModal(pianta, { ...CAMPI, extra:'cura' }));
+}
+
+document.addEventListener('DOMContentLoaded', () =&gt; {
+    logInit('piante', piante);
+
+    initSeEsiste('.griglia', () =&gt; {
+        // Filtri a bottoni (consigliato). Se preferisci la tendina:
+        // inizializzaDropdown('[data-dropdown="categoria"]', ...)
+        inizializzaFiltriBottoni('[data-filtri="categoria"]',
+            estraiCategorie(piante, 'categoria'),
+            cat =&gt; { categoriaCorrente = cat; renderCatalogo(); },
+            { valoreIniziale:'tutte' });
+
+        const cerca = debounce(v =&gt; { ricercaCorrente = v; renderCatalogo(); }, 200);
+        ascolta('#input-ricerca', 'input', e =&gt; cerca(e.target.value));
+
+        initModal('.modal-overlay');
+        renderCatalogo();
+    });
+
+    initSeEsiste('.accordion', () =&gt; inizializzaAccordion());
+});</code></pre>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2 id="boilerplate">boilerplate.html</h2>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="it"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;TITOLO — Nome Progetto&lt;/title&gt;
+    &lt;link rel="stylesheet" href="style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;header class="header"&gt;
+        &lt;div class="header-inner"&gt;
+            &lt;a href="index.html" class="logo"&gt;Nome Progetto&lt;/a&gt;
+            &lt;nav class="nav"&gt;
+                &lt;a href="index.html" class="nav-link attivo"&gt;Home&lt;/a&gt;
+                &lt;a href="catalogo.html" class="nav-link"&gt;Catalogo&lt;/a&gt;
+                &lt;a href="contatti.html" class="nav-link"&gt;Contatti&lt;/a&gt;
+            &lt;/nav&gt;
+        &lt;/div&gt;
+    &lt;/header&gt;
+
+    &lt;main&gt;
+    &lt;/main&gt;
+
+    &lt;footer class="footer"&gt;
+        &lt;p&gt;&amp;copy; 2026 Nome Azienda S.r.l. &amp;mdash; P.IVA 00000000000&lt;/p&gt;
+    &lt;/footer&gt;
+
+    &lt;script src="script.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2 id="hero">Hero con background-image</h2>
+<pre><code>&lt;section class="hero"&gt;
+    &lt;div class="hero-contenuto"&gt;
+        &lt;h1&gt;Titolo Principale&lt;/h1&gt;
+        &lt;h2&gt;Sottotitolo descrittivo&lt;/h2&gt;
+        &lt;a href="catalogo.html" class="btn-cta"&gt;Call to Action&lt;/a&gt;
+    &lt;/div&gt;
+&lt;/section&gt;</code></pre>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2 id="filtri">Barra filtri — bottoni + ricerca + contatore (consigliato)</h2>
+<pre><code>&lt;section class="barra-filtri"&gt;
+    &lt;div class="container filtri-inner"&gt;
+        &lt;div class="filtri-bottoni" data-filtri="categoria"&gt;
+            &lt;!-- bottoni generati da JS, .attivo gestito automaticamente --&gt;
+        &lt;/div&gt;
+        &lt;div class="filtro-destra"&gt;
+            &lt;label for="input-ricerca" class="sr-only"&gt;Cerca&lt;/label&gt;
+            &lt;input type="search" id="input-ricerca" class="input-ricerca" placeholder="Cerca..."&gt;
+        &lt;/div&gt;
+        &lt;span id="contatore-risultati"&gt;&lt;/span&gt;
+    &lt;/div&gt;
+&lt;/section&gt;</code></pre>
+<p>Inizializzazione JS:</p>
+<pre><code>inizializzaFiltriBottoni('[data-filtri="categoria"]',
+    estraiCategorie(prodotti, 'categoria'),
+    cat =&gt; { categoriaCorrente = cat; renderCatalogo(); },
+    { conTutti:true, valoreTutti:'tutte', valoreIniziale:'tutte' });
+
+ascolta('#input-ricerca', 'input',
+    debounce(e =&gt; { ricercaCorrente = e.target.value; renderCatalogo(); }, 200));</code></pre>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2 id="filtri-dropdown">Barra filtri — variante con dropdown UL/LI</h2>
+<pre><code>&lt;div class="dropdown-custom" data-dropdown="categoria" tabindex="0"&gt;
+    &lt;div class="dropdown-label"&gt;Categoria: &lt;span class="dropdown-valore"&gt;Tutte&lt;/span&gt;&lt;/div&gt;
+    &lt;ul class="dropdown-opzioni"&gt;&lt;!-- riempita da JS --&gt;&lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+<pre><code>inizializzaDropdown('[data-dropdown="categoria"]',
+    [{ value:'tutte', label:'Tutte' },
+     ...estraiCategorie(prodotti, 'categoria').map(v =&gt; ({ value:v, label:etichettaCategoria(v) }))],
+    v =&gt; { categoriaCorrente = v; renderCatalogo(); },
+    { valoreIniziale:'tutte' });</code></pre>
+<p>Utile se le categorie sono molte e lo spazio è stretto.</p>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2 id="dropdown">Dropdown — 3 varianti</h2>
+<p><strong>A) Bottoni filtro (consigliato)</strong> — zero edge case, stato visibile</p>
+<pre><code>&lt;div class="filtri-bottoni" data-filtri="categoria"&gt;&lt;/div&gt;</code></pre>
+
+<p><strong>B) Tendina UL/LI</strong> — più compatta, pattern verifica-2304</p>
+<pre><code>&lt;div class="dropdown-custom" data-dropdown="categoria" tabindex="0"&gt;
+    &lt;div class="dropdown-label"&gt;Categoria: &lt;span class="dropdown-valore"&gt;Tutte&lt;/span&gt;&lt;/div&gt;
+    &lt;ul class="dropdown-opzioni"&gt;&lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+
+<p><strong>C) &lt;select&gt; nativo</strong> — fallback rapido se il tempo scarseggia</p>
+<pre><code>&lt;select class="dropdown" onchange="filtraCategoria(this.value)"&gt;
+    &lt;option value="tutte"&gt;Tutte&lt;/option&gt;
+&lt;/select&gt;</code></pre>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2 id="griglia">Griglia prodotti</h2>
+<pre><code>&lt;section&gt;
+    &lt;div class="container"&gt;
+        &lt;div class="griglia"&gt;&lt;!-- Card generate da JS --&gt;&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/section&gt;</code></pre>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2 id="card-prodotto">Card prodotto — generata da renderCard()</h2>
+<pre><code>// L'HTML è solo riferimento; in pratica:
+griglia.appendChild(renderCard(prodotto, {
+    campi:    { titolo:'nome', testo:'descrizione', immagine:'immagine',
+                prezzo:'prezzo', categoria:'categoria' },
+    esaurito: p =&gt; !p.disponibile,
+    onClick:  (p, ev) =&gt; apriDettaglio(p),        // listener — niente onclick inline
+    onBottone:(p, ev) =&gt; aggiungiAlCarrello(p)    // opzionale, con stopPropagation
+}));</code></pre>
+<pre><code>&lt;article class="card"&gt;
+    &lt;img src="..." alt="..."&gt;
+    &lt;div class="card-body"&gt;
+        &lt;span class="badge badge-categoria"&gt;categoria&lt;/span&gt;
+        &lt;h3&gt;Nome&lt;/h3&gt;
+        &lt;p&gt;Descrizione.&lt;/p&gt;
+        &lt;p class="prezzo"&gt;&amp;euro; 19.90&lt;/p&gt;
+        &lt;button class="btn" type="button"&gt;Vedi dettaglio&lt;/button&gt;
+    &lt;/div&gt;
+&lt;/article&gt;</code></pre>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2 id="card-info">Card info (senza immagine)</h2>
+<pre><code>&lt;div class="card-info"&gt;
+    &lt;h3&gt;Titolo&lt;/h3&gt;
+    &lt;p&gt;Testo descrittivo.&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2 id="card-prezzo">Card prezzo (pricing tier)</h2>
+<pre><code>&lt;div class="card-prezzo"&gt;
+    &lt;h3&gt;Piano Base&lt;/h3&gt;
+    &lt;p class="prezzo-grande"&gt;&amp;euro;50 &lt;small&gt;/mese&lt;/small&gt;&lt;/p&gt;
+    &lt;ul&gt;&lt;li&gt;Feature 1&lt;/li&gt;&lt;li&gt;Feature 2&lt;/li&gt;&lt;/ul&gt;
+    &lt;button class="btn"&gt;Scegli piano&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2 id="badge">Badge (5 colori generici)</h2>
+<pre><code>&lt;span class="badge badge--verde"&gt;facile&lt;/span&gt;
+&lt;span class="badge badge--giallo"&gt;media&lt;/span&gt;
+&lt;span class="badge badge--rosso"&gt;difficile&lt;/span&gt;
+&lt;span class="badge badge--blu"&gt;nuovo&lt;/span&gt;
+&lt;span class="badge badge--grigio"&gt;esaurito&lt;/span&gt;
+&lt;span class="badge badge-categoria"&gt;interno&lt;/span&gt;</code></pre>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2 id="modal">Modal overlay</h2>
+<pre><code>&lt;!-- Prima di &lt;/body&gt;. "nascosto" lo nasconde. --&gt;
+&lt;div class="modal-overlay nascosto" aria-modal="true" role="dialog"&gt;&lt;/div&gt;</code></pre>
+<p>JS — una sola volta nel DOMContentLoaded:</p>
+<pre><code>initModal('.modal-overlay');                       // backdrop + .modal-chiudi + Escape
+
+function apriDettaglio(item) {
+    apriModal('.modal-overlay',
+        templateModal(item, { titolo:'nome', testo:'descrizione', extra:'cura',
+                              immagine:'immagine', prezzo:'prezzo',
+                              categoria:'categoria' }));
+}</code></pre>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2 id="dettaglio">Dettaglio in-pagina (alternativa al modal)</h2>
+<p>Pattern verifica-2304/2101: niente modal, il dettaglio sostituisce la griglia.</p>
+<pre><code>&lt;section class="pane"&gt;&lt;/section&gt;</code></pre>
+<pre><code>function apriDettaglio(prodotto) {
+    mostraDettaglio('.pane', prodotto, {
+        campi:      { titolo:'name', testo:'description',
+                      prezzo:'price', categoria:'category' },
+        campiExtra: [{ etichetta:'Giacenza', campo:'stock' },
+                     { etichetta:'Arrivo',   campo:'arrivedAt' }],
+        onIndietro: () =&gt; renderCatalogo(),
+        scrollInto: true
+    });
+}</code></pre>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2 id="accordion">Accordion FAQ</h2>
+<pre><code>&lt;div class="accordion"&gt;
+    &lt;div class="accordion-item"&gt;
+        &lt;button class="accordion-titolo" type="button"&gt;
+            Domanda 1?
+            &lt;span class="accordion-icona"&gt;+&lt;/span&gt;
+        &lt;/button&gt;
+        &lt;div class="accordion-corpo"&gt;&lt;p&gt;Risposta 1.&lt;/p&gt;&lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<pre><code>inizializzaAccordion();   // chiama nel DOMContentLoaded</code></pre>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2 id="form">Form contatti</h2>
+<pre><code>&lt;form class="form-contatti" action="#" method="post"&gt;
+    &lt;div class="campo"&gt;
+        &lt;label for="nome"&gt;Nome&lt;/label&gt;
+        &lt;input type="text" id="nome" name="nome" required&gt;
+    &lt;/div&gt;
+    &lt;div class="campo"&gt;
+        &lt;label for="email"&gt;Email&lt;/label&gt;
+        &lt;input type="email" id="email" name="email" required&gt;
+    &lt;/div&gt;
+    &lt;div class="campo"&gt;
+        &lt;label for="messaggio"&gt;Messaggio&lt;/label&gt;
+        &lt;textarea id="messaggio" name="messaggio" rows="5" required&gt;&lt;/textarea&gt;
+    &lt;/div&gt;
+    &lt;button type="submit" class="btn"&gt;Invia&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+<pre><code>ascolta('form', 'submit', e =&gt; { e.preventDefault(); logForm(e.target); });</code></pre>
+
+<hr>
+
+<!-- ================================================================ -->
+<h2 id="info-contatti">Info contatti + layout 2 colonne</h2>
+<pre><code>&lt;div class="contatti-grid"&gt;
+    &lt;div class="info-contatti"&gt;
+        &lt;h2&gt;Dove siamo&lt;/h2&gt;
+        &lt;p&gt;&lt;strong&gt;Indirizzo:&lt;/strong&gt; Via Esempio 1&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;form class="form-contatti"&gt;...&lt;/form&gt;
+&lt;/div&gt;</code></pre>
+
+</body>
+</html>

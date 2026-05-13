@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VINTAGE SHOP S.r.l.</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="utils/css/componenti.css">
+</head>
+<body>
+    <main>
+        <header class="header">
+            <div class="header-inner">
+                <a href="index.html" class="logo">VINTAGE SHOP S.r.l.</a>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link attivo">Home</a>
+                    <a href="catalogo.html" class="nav-link">Catalogo</a>
+                </nav>
+            </div>
+        </header>
+
+        <section class="barra-filtri">
+            <div class="container filtri-inner">
+                <div class="filtro-sinistra">
+                    <div class="dropdown-custom" data-dropdown="categoria" tabindex="0">
+                        <div class="dropdown-label">Categoria: <span class="dropdown-valore">Tutte</span></div>
+                        <ul class="dropdown-opzioni"></ul>
+                    </div>
+                </div>
+                <div class="filtro-destra">
+                    <input type="search" id="input-ricerca" class="input-ricerca" placeholder="Cerca nella descrizione...">
+                </div>
+            </div>
+        </section>
+
+        <section class="container">
+            <div class="catalogo-tabellare">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Immagine</th>
+                            <th>Codice</th>
+                            <th>Descrizione</th>
+                            <th>Categoria</th>
+                            <th>Prezzo</th>
+                            <th>Quantità</th>
+                            <th>Locazione</th>
+                        </tr>
+                    </thead>
+                    <tbody id="catalogo-prodotti"></tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="utils/js/dom.js"></script>
+    <script src="utils/js/filtri.js"></script>
+    <script src="utils/js/dropdown.js"></script>
+    <script src="utils/js/logging.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

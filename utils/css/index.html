@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>utils/css/</title>
+</head>
+<body>
+<a href="../">← utils/</a>
+<h1>css/</h1>
+<hr>
+<ul>
+    <li><a href="reset.css">reset.css</a> — Box-sizing, margini zero, body base, .nascosto, .sr-only, .container</li>
+    <li><a href="variabili.css">variabili.css</a> — Template :root con colori, ombre, badge. <strong>Cambia i valori qui per ogni verifica.</strong></li>
+    <li><a href="layout.css">layout.css</a> — Header sticky, hero (bg-image + gradiente), griglie (prodotti / presentazione / contatti), barra filtri sticky, footer, responsive 900px e 600px</li>
+    <li><a href="componenti.css">componenti.css</a> — Card prodotto (+ varianti hover), card-info, card-prezzo, badge (5 colori), dropdown custom UL/LI, filtri a bottoni, input ricerca, bottoni, modal, dettaglio in-pagina, accordion, form, box-evidenziato, prezzo</li>
+</ul>
+
+<hr>
+<h2>Come usarli</h2>
+<pre>Opzione A — Un unico style.css (consigliata per la verifica):
+  Copia il contenuto di variabili.css in cima,
+  poi reset.css, poi layout.css, poi componenti.css.
+
+Opzione B — File separati con @import:
+  @import url('../utils/css/variabili.css');
+  @import url('../utils/css/reset.css');
+  @import url('../utils/css/layout.css');
+  @import url('../utils/css/componenti.css');</pre>
+
+<hr>
+<h2>Hover sulle card — 4 varianti</h2>
+<pre>Default (nessuna classe extra):  translateY(-0.25rem) + ombra
+card--hover-ombra:               solo ombra, niente movimento
+card--hover-scala:               scale(1.025) + ombra
+card--hover-bordo:               outline colorato
+card--hover-sfondo:              sfondo che schiarisce</pre>
+
+<hr>
+<h2>Accordion — come funziona</h2>
+<pre>CSS: grid-template-rows 0fr → 1fr (anima l'altezza reale, niente max-height arbitrario).
+JS:  inizializzaAccordion() in componenti.js — fa solo classList.add/remove('aperto').
+HTML: .accordion-corpo deve avere UN solo figlio diretto (il &lt;p&gt; o un &lt;div&gt; wrapper).</pre>
+
+<hr>
+<h2>rem vs px</h2>
+<pre>rem → padding, margin, gap, font-size, max-width
+px  → border-width, box-shadow offset, outline (valori sotto 3px)</pre>
+</body>
+</html>

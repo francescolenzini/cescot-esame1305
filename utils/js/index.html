@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>utils/js/</title>
+</head>
+<body>
+<a href="../">← utils/</a>
+<h1>js/</h1>
+<hr>
+<ul>
+    <li><a href="dom.js">dom.js</a> — $, $$, crea, creaHTML, attivaUno, svuota, appendMulti, ascolta, ascoltaTutti, delega, delegaClick, chiudeFuori, tasto</li>
+    <li><a href="filtri.js">filtri.js</a> — filtraArray, filtraSemplice (AND categoria+ricerca), estraiCategorie, etichettaCategoria, debounce</li>
+    <li><a href="dropdown.js">dropdown.js</a> — inizializzaDropdown (UL/LI), inizializzaFiltriBottoni (bottoni con .attivo). Entrambi restituiscono {setValue, getValue}.</li>
+    <li><a href="componenti.js">componenti.js</a> — initModal, apriModal, chiudiModal, templateModal, inizializzaAccordion, renderCard, mostraDettaglio, initSeEsiste</li>
+    <li><a href="logging.js">logging.js</a> — logInit, logFiltro, logDettaglio, logForm. Il logging viene valutato all'esame.</li>
+</ul>
+
+<hr>
+<h2>Ordine di inclusione in HTML</h2>
+<pre>&lt;script src="../utils/js/dom.js"&gt;&lt;/script&gt;
+&lt;script src="../utils/js/filtri.js"&gt;&lt;/script&gt;
+&lt;script src="../utils/js/dropdown.js"&gt;&lt;/script&gt;
+&lt;script src="../utils/js/componenti.js"&gt;&lt;/script&gt;
+&lt;script src="../utils/js/logging.js"&gt;&lt;/script&gt;
+&lt;script src="script.js"&gt;&lt;/script&gt;
+&lt;!-- Tutti senza defer — si caricano in ordine, script.js li trova già disponibili --&gt;
+&lt;!-- Mettili prima di &lt;/body&gt;, non in &lt;head&gt; --&gt;</pre>
+
+<hr>
+<h2>Dropdown: quale usare?</h2>
+<pre>→ USA inizializzaFiltriBottoni (bottoni pill con .attivo)
+  Zero edge case, stato visibile, una riga nel DOMContentLoaded.
+  Pattern verifica-2101.
+
+  Se ci sono 6+ categorie e lo spazio è stretto:
+  → USA inizializzaDropdown (tendina UL/LI, pattern verifica-2304)
+
+  Se il tempo scarseggia:
+  → &lt;select&gt; nativo: niente JS, scrivi le &lt;option&gt; a mano, valido all'esame
+
+Bottoni e dropdown generano le voci dai dati:
+  estraiCategorie(dati, 'categoria') → ['interno', 'esterno', ...]</pre>
+
+<hr>
+<h2>renderCard vs creaCard custom</h2>
+<pre>renderCard(item, opts)  → usa la libreria, schema via opts.campi
+                          onClick/onBottone sono listener (no onclick inline)
+
+creaCard custom          → scrivi tu la funzione in script.js
+                          va bene se lo schema è insolito o hai poco tempo
+
+In entrambi i casi: addEventListener sul bottone, closure su item,
+niente onclick="..." nell'HTML generato.</pre>
+
+<hr>
+<h2>Statico vs dinamico</h2>
+<pre>STATICO (HTML diretto):
+  header, nav, footer, hero, form, struttura accordion,
+  contenitore .griglia vuoto, overlay modal vuoto,
+  div.dropdown-custom vuoto, div.filtri-bottoni vuoto
+
+DINAMICO (JS + dati):
+  card nella griglia, contenuto modal/dettaglio,
+  voci dropdown, bottoni filtro</pre>
+</body>
+</html>

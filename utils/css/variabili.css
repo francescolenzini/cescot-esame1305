@@ -1,0 +1,32 @@
+:root {
+    /* Colori principali — cambia questi per ogni verifica */
+    --color-primary:    #2D6A4F;
+    --color-secondary:  #1B4332;
+    --color-accent:     #D4A843;
+
+    /* Sfondi e testi */
+    --color-bg:         #F0F4EF;
+    --color-surface:    #FFFFFF;
+    --color-text:       #1C2B1E;
+    --color-text-inv:   #F8FAF8;
+    --color-muted:      #6b7280;
+
+    /* Bordi e ombre */
+    --color-border:     #d1d5db;
+    --shadow-soft:      0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-card:      0 4px 16px rgba(0, 0, 0, 0.10);
+    --shadow-modal:     0 1.25rem 3.75rem rgba(0, 0, 0, 0.30);
+
+    /* Font */
+    --font: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+
+    /* Badge — colori generici riusabili per qualsiasi scopo */
+    --badge-verde-bg:    #DCFCE7;  --badge-verde-text:    #166534;
+    --badge-giallo-bg:   #FEF9C3;  --badge-giallo-text:   #854D0E;
+    --badge-rosso-bg:    #FEE2E2;  --badge-rosso-text:    #991B1B;
+    --badge-blu-bg:      #DBEAFE;  --badge-blu-text:      #1E40AF;
+    --badge-grigio-bg:   #F3F4F6;  --badge-grigio-text:   #4B5563;
+
+    /* Disabilitato / esaurito */
+    --color-disabled: #9CA3AF;
+}
