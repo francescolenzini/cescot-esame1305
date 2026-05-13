@@ -39,21 +39,5 @@ document.addEventListener('DOMContentLoaded', () =&gt; {
 logInit('prodotti', dati);                               // in DOMContentLoaded
 logFiltro(categoriaCorrente, ricercaCorrente, risultati); // in renderCatalogo
 logDettaglio(item);                                      // in apriDettaglio</code></pre>
-
-<hr>
-<h2>Cosa rendere statico vs dinamico</h2>
-<pre>STATICO (HTML diretto — non generare con JS):
-  header, nav, footer, hero, form, struttura accordion,
-  contenitore .griglia vuoto, overlay modal vuoto,
-  dropdown-custom vuoto (le voci le genera inizializzaDropdown),
-  filtri-bottoni vuoto (i bottoni li genera inizializzaFiltriBottoni)
-
-DINAMICO (genera con JS dall'array dati):
-  card nella griglia        → renderCard() o creaCard() custom
-  contenuto modal           → apriModal() + templateModal()
-  voci dropdown             → inizializzaDropdown()
-  bottoni filtro            → inizializzaFiltriBottoni()
-
-Regola: se il contenuto non cambia in base ai dati, è statico.</pre>
 </body>
 </html>

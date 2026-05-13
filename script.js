@@ -205,5 +205,21 @@ function inizializzaCatalogo() {
 //   AVVIO
 // ============================================================================
 
-document.addEventListener('DOMContentLoaded', inizializzaCatalogo);
+document.addEventListener('DOMContentLoaded', () => {
+    const corpoCatalogo = document.querySelector('#catalogo-prodotti');
+    const ricercaCatalogo = document.querySelector('#input-ricerca');
+
+    if (!corpoCatalogo && !ricercaCatalogo) return;
+
+    if (typeof estraiCategorie !== 'function' ||
+        typeof etichettaCategoria !== 'function' ||
+        typeof filtraSemplice !== 'function' ||
+        typeof inizializzaDropdown !== 'function' ||
+        typeof debounce !== 'function') {
+        console.error('Le dipendenze del catalogo non sono state caricate correttamente.');
+        return;
+    }
+
+    inizializzaCatalogo();
+});
 
